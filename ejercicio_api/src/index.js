@@ -4,6 +4,7 @@ const {
   dwalletLoginEndpoint,
   dwalletRegisterEndpoint,
   dwalletCashierEndpoint,
+  dwalletMovementsEndpoint,
 } = require("./utils/endpoints.js");
 const app = express();
 const port = 3000;
@@ -54,6 +55,32 @@ app.get("/cashiers", (req, res) => {
     })
     //We will improve this error to have status codes and logging
     .catch((error) => res.send({ error }));
+});
+
+app.post("/movements", (req, res) => {
+  if (
+    !req.body?.idUsuario ||
+    !req.body?.concepto ||
+    !req.body?.categoria ||
+    !req.body?.total ||
+    !req.body?.medio ||
+    !req.body?.fecha
+  ) {
+    //We will improve this error to have status codes and logging
+    res.send({ error: "You must provide the movement information" });
+  }
+  axios
+    .post(`${dwalletBaseUrl}${dwalletMovementsEndpoint}`, req.body, {
+      headers: {
+        apiKey: req.headers.apikey,
+      },
+    })
+    .then((apiResponse) => {
+      res.send(apiResponse?.data);
+    })
+    .catch((error) => {
+      res.send({ error });
+    });
 });
 
 app.listen(port, () => {
