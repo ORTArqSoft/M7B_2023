@@ -10,6 +10,8 @@ const app = express();
 const port = 3000;
 const axios = require("axios");
 const mongoose = require("mongoose");
+const Sequelize = require("sequelize");
+const mysql = require("mysql2");
 
 mongoose
   .connect("mongodb://localhost:27017/dwallet", {
@@ -28,6 +30,53 @@ const userSchema = new mongoose.Schema({
 
 // Create the User model from the schema
 const User = mongoose.model("User", userSchema);
+
+//MySql connection
+const connection = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "admin",
+});
+
+// Run create database statement
+connection.query(
+  `CREATE DATABASE IF NOT EXISTS movementsDb`,
+  function (err, results) {
+    console.log(results);
+    console.log(err);
+  }
+);
+
+// Close the connection
+connection.end();
+
+// Define la configuración de la base de datos
+const sequelize = new Sequelize("movementsDb", "root", "admin", {
+  host: "localhost",
+  dialect: "mysql",
+});
+
+// Define el modelo de la entidad que quieres crear
+const Movement = sequelize.define("movement", {
+  idUser: Sequelize.INTEGER,
+  concept: Sequelize.STRING,
+  category: Sequelize.INTEGER,
+  total: Sequelize.INTEGER,
+  medium: Sequelize.STRING,
+  date: Sequelize.STRING,
+});
+
+// Crea la base de datos e inserta información de prueba si es necesario
+sequelize.sync().then(() => {
+  Movement.create({
+    idUser: 3,
+    concept: "Gasto en cosas 2",
+    category: 4,
+    total: 10,
+    medium: "Efectivo",
+    date: "2022-09-29",
+  });
+});
 
 // New line to support send a body
 app.use(express.json());
@@ -108,6 +157,16 @@ app.post("/movements", (req, res) => {
       },
     })
     .then((apiResponse) => {
+      Movement.create({
+        idUser: req.body.idUsuario,
+        concept: req.body.concepto,
+        category: req.body.categoria,
+        total: req.body.total,
+        medium: req.body.medio,
+        date: req.body.fecha,
+      }).then((entity) => {
+        console.log("Movimiento insertado correctamente", entity);
+      });
       res.send(apiResponse?.data);
     })
     .catch((error) => {
