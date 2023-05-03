@@ -1,18 +1,20 @@
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
+
+const privateKey = fs.readFileSync("./private.key");
+const publicKey = fs.readFileSync("./public.key");
 
 // Función para generar un token JWT
 function generarToken(payload) {
-  const claveSecreta = "miClaveSecreta123"; // esta clave debería ser secreta y estar almacenada en un lugar seguro
-  const opciones = { expiresIn: "1h" }; // el token expirará en una hora
-  const token = jwt.sign(payload, claveSecreta, opciones);
+  const opciones = { expiresIn: "1s", algorithm: "RS256" }; // el token expirará en una hora
+  const token = jwt.sign(payload, privateKey, opciones);
   return token;
 }
 
 // Función para verificar un token JWT
 function verificarToken(token) {
-  const claveSecreta = "miClaveSecreta123"; // esta clave debería ser secreta y estar almacenada en un lugar seguro
   try {
-    const payload = jwt.verify(token, claveSecreta);
+    const payload = jwt.verify(token, publicKey);
     return payload;
   } catch (error) {
     console.log("Token no válido");
@@ -29,3 +31,17 @@ if (payload) {
   console.log("Token válido");
   console.log("Payload:", payload);
 }
+
+console.log("-----");
+
+console.log("Verificar token corrupto");
+verificarToken(
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyMywiaWF0IjoxNjgzMTE2MDA4LCJleHAiOjE2ODMxMTYwMDl9.29lAo1zacG6pM32fmbhE5h-lqFOaQLxXTmyTTWRSchp"
+);
+console.log("-----");
+
+setTimeout(() => {
+  console.log("Verificar token que no va ser válido");
+  verificarToken(token);
+  console.log("-----");
+}, 2000);
