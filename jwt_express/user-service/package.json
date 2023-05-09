@@ -1,0 +1,20 @@
+{
+  "name": "user-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.3.9",
+    "jsonwebtoken": "^9.0.0",
+    "express": "^4.18.2",
+    "sails-disk": "^2.1.2",
+    "sails-mongo": "^2.0.1",
+    "sqlite3": "^5.1.6",
+    "waterline": "^0.15.2"
+  }
+}
