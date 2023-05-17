@@ -1,0 +1,6 @@
+{
+  "credentials": {
+    "SERVICES2_BASE_URL": "http://localhost",
+    "SERVICES2_PORT": 3000
+  }
+}
