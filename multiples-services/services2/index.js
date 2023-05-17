@@ -11,7 +11,7 @@ app.post("/orders", async (req, res) => {
   const userId = req.body.userId;
   try {
     const user = await axios.get(
-      `${credentials.SERVICES2_BASE_URL}:${credentials.SERVICES2_PORT}/users/${userId}`
+      `${credentials.SERVICES1_BASE_URL}:${credentials.SERVICES1_PORT}/users/${userId}`
     );
   } catch (error) {
     console.log("error", error);
