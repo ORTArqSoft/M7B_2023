@@ -27,7 +27,6 @@ app.get("/api/tasks", async (req, res) => {
     const returnedTasks = await getTasks();
     const tasks = [];
 
-    // Obtener cada tarea y agregarla al array
     returnedTasks.forEach(async (key) => {
       const task = await getItemFromKey(key);
       tasks.push(JSON.parse(task));
@@ -46,9 +45,11 @@ app.post("/api/tasks", async (req, res) => {
   try {
     const { title, description, assigned } = req.body;
 
-    var pipeline = new Pipeline();
+    const pipeline = new Pipeline();
 
+    //Should be in another pipeline
     pipeline.use(checkTaskBody);
+    //
     pipeline.use(getTaskId);
     pipeline.use(formatBody);
     pipeline.use(createTask);
@@ -57,7 +58,7 @@ app.post("/api/tasks", async (req, res) => {
     return res.status(201).json(data);
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error });
   }
 });
 
@@ -66,9 +67,11 @@ app.put("/api/tasks/:taskId", async (req, res) => {
   const updatedFields = req.body;
   console.log("updatedFields", updatedFields);
   console.log("taskId", taskId);
-  var pipeline = new Pipeline();
+  const pipeline = new Pipeline();
 
+  //Should be in another pipeline
   pipeline.use(checkTaskBody);
+  //
   pipeline.use(mergeTasks);
   pipeline.use(formatBody);
   pipeline.use(createTask);

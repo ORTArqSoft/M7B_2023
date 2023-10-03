@@ -48,5 +48,4 @@ module.exports = {
   getTasks,
   getItemFromKey,
   delTask,
-  RedisClient,
 };

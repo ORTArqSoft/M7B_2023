@@ -1,37 +1,42 @@
 const express = require("express");
 const app = express();
-const events = require("events");
 
-// Crear un objeto EventEmitter para manejar los eventos
-const eventEmitter = new events.EventEmitter();
-
-// Middleware para analizar el cuerpo de las solicitudes como JSON
 app.use(express.json());
 
-// Suscribirse a un evento específico
+const subscribers = {
+  // "eventName": []
+};
+
 app.post("/subscribe/:event", (req, res) => {
   const event = req.params.event;
 
-  // Agregar el cliente actual como suscriptor al evento
-  eventEmitter.on(event, (data) => {
-    console.log("me llame");
-    res.json(data);
+  const subscriptionId = Math.random().toString(36).substr(2, 9);
+
+  if (!subscribers[event]) {
+    subscribers[event] = [];
+  }
+
+  subscribers[event].push({
+    id: subscriptionId,
+    response: res,
   });
 
-  res.send("Suscripción exitosa");
+  res.json({ subscriptionId, event });
 });
 
-// Publicar un evento
 app.post("/publish/:event", async (req, res) => {
   const event = req.params.event;
+  const eventData = req.body;
 
-  // Emitir el evento y pasar los datos
-  await eventEmitter.emit(event);
+  if (subscribers[event]) {
+    subscribers[event].forEach((subscriber) => {
+      subscriber.response.json(eventData);
+    });
+  }
 
-  res.send("Publicación exitosa");
+  res.send("Publicado exitosamente");
 });
 
-// Iniciar el servidor
 app.listen(3000, () => {
-  console.log("Servidor iniciado en el puerto 3000");
+  console.log("Server corriendo en puerto 3000");
 });
