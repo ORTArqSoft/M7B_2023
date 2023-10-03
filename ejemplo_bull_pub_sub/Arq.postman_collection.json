@@ -1,0 +1,129 @@
+{
+	"info": {
+		"_postman_id": "019e5412-7f03-48a0-b370-e2238cc4c996",
+		"name": "Arq",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12793382"
+	},
+	"item": [
+		{
+			"name": "Bull",
+			"item": [
+				{
+					"name": "Create Job",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Retrieve the WebSocket URL from the environment variables",
+									"const wsUrl = pm.environment.get(\"ws_url\");",
+									"",
+									"// Create a WebSocket connection",
+									"const ws = new WebSocket(wsUrl);",
+									"",
+									"// Define a callback for handling WebSocket messages",
+									"ws.onmessage = function (event) {",
+									"    // Handle WebSocket message (e.g., log it)",
+									"    console.log(\"Received WebSocket message:\", event.data);",
+									"};",
+									"",
+									"// Store the WebSocket connection in a Postman variable for later use",
+									"pm.variables.set(\"websocket_connection\", ws);",
+									"",
+									"// Continue the request execution",
+									"pm.sendRequest({}, function (err, response) {",
+									"    if (err) {",
+									"        console.error(err);",
+									"    }",
+									"    console.log(response);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"task\": \"do stuff\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/jobs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Job",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/jobs/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"jobs",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ws_url",
+			"value": "ws:http://localhost:3000/jobs",
+			"type": "string"
+		}
+	]
+}

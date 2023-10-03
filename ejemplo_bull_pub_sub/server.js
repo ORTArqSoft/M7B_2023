@@ -6,12 +6,37 @@ const Queue = require("bull");
 const redisClient = redis.createClient();
 const myQueue = new Queue("myQueue", { redis: redisClient });
 
+const subscribers = {
+  // "eventId": []
+};
+
 //Bull job processor
 myQueue.process(async (job) => {
   console.log(`Processing job ${job.id}`);
   // Do some async work here
   // ...
   console.log(`Job ${job.id} completed`);
+
+  //Pub logic
+  if (subscribers[job.id]) {
+    try {
+      //First way
+      redisClient.connect();
+      // redisClient.publish(job.id, job.data);
+      //Seconday way
+      subscribers[job.id].forEach((subscriber) => {
+        console.log("entre", subscriber.response);
+        subscriber.response.json({
+          message: "Task accomplished",
+          data: subscriber.data,
+        });
+      });
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      redisClient.quit();
+    }
+  }
 });
 
 // Create an Express app
@@ -25,8 +50,31 @@ app.post("/jobs", async (req, res) => {
     res.status(400).send("Job data is required");
     return;
   }
-  const job = await myQueue.add(data);
-  res.json({ id: job.id });
+  try {
+    const job = await myQueue.add(data, { delay: 3000 });
+    //Sub logic
+    await redisClient.connect();
+    await redisClient.subscribe(job.id, (message) => {
+      console.log(message);
+    });
+
+    if (!subscribers[job.id]) {
+      subscribers[job.id] = [];
+    }
+    subscribers[job.id].push({
+      id: job.id,
+      data,
+      response: res,
+    });
+    //Sub logic
+
+    //Commented given an error
+    res.json({ id: job.id });
+  } catch (error) {
+    console.log("error", error);
+  } finally {
+    redisClient.quit();
+  }
 });
 
 app.get("/jobs/:id", async (req, res) => {
