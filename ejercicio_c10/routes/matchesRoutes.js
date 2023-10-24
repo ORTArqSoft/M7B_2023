@@ -8,7 +8,7 @@ router
     .post("/", matchesController.createMatch)
     .post("/:matchId/bet", matchesController.createBet)
     .post("/:matchId/result", matchesController.createResult)
-    .get("/:matchId/bets", matchesController.getResults)
+    .get("/:matchId/bets", matchesController.getBets)
     .get("/:matchId/bets/winners", matchesController.getWinners);
 
 module.exports = router;

@@ -1,20 +1,10 @@
-const {
-  addMatch, 
-  getMatch,
-  getAllMatches
-} = require("../services/matches");
-const {
-  getWinners
-} = require("../services/winners");
-const {
-  addBet,
-  getBets,
-  resultsBet
-} = require("../services/bets");
+const MatchesService = require("../services/matches");
+const WinnersService = require("../services/winners");
+const BetsService= require("../services/bets");
 
 exports.getMatchById = async (req, res) => {
   try{
-    let match = await getMatch(req.params.id);
+    let match = await MatchesService.getMatch(req.params.id);
     if (!match) {
       res.status(404).send("Match not found");
     } else{
@@ -28,7 +18,7 @@ exports.getMatchById = async (req, res) => {
 
 exports.getMatches = async (req, res) => {
   try{
-    let match = await getAllMatches();
+    let match = await MatchesService.getAllMatches();
     if (!match) {
       res.status(404).send("No matches not found");
     } else {
@@ -42,7 +32,7 @@ exports.getMatches = async (req, res) => {
 
 exports.createMatch = async (req, res) => {
   try {
-    let newMatch = await addMatch(req.body);
+    let newMatch = await MatchesService.addMatch(req.body);
     res.status(201).send(newMatch);
   }
   catch (err){
@@ -52,7 +42,7 @@ exports.createMatch = async (req, res) => {
 
 exports.createBet = async (req, res) => {
   try {
-    let newBet = await addBet({...req.params, ...req.body});
+    let newBet = await BetsService.addBet({...req.params, ...req.body});
     res.status(201).send(newBet);
   }
   catch (err) {
@@ -62,7 +52,7 @@ exports.createBet = async (req, res) => {
 
 exports.createResult = async (req, res) => {
   try {
-    let newBet = await resultsBet(req.params.matchId, req.body);
+    let newBet = await BetsService.resultsBet(req.params.matchId, req.body);
     res.status(201).send(newBet);
   }
   catch (err){
@@ -70,9 +60,9 @@ exports.createResult = async (req, res) => {
   }
 };
 
-exports.getResults = async (req, res) => {
+exports.getBets = async (req, res) => {
   try {
-    let match = await getBets(req.params.matchId);
+    let match = await BetsService.getBets(req.params.matchId);
     if (!match) {
       res.status(404).send("Match not found");
     }
@@ -87,7 +77,7 @@ exports.getResults = async (req, res) => {
 
 exports.getWinners = async (req, res) => {
   try{
-    let match = await getWinners(req.params.matchId);
+    let match = await WinnersService.getWinners(req.params.matchId);
     if (!match) {
       res.status(404).send("Match not found");
     }

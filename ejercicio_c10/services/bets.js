@@ -14,7 +14,7 @@ exports.addBet = async (bet) => {
 }
 
 exports.getBets = (matchId) => {
-  return getBetsOrm(matchId);
+  return BetsRepository.getBets(matchId);
 }
 
 exports.resultsBet = async (matchId, result)=> {
