@@ -13,7 +13,6 @@ module.exports = {
       script: "./divide.js",
       autorestart: false
     }
-           
     ]
   }
   

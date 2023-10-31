@@ -1,0 +1,8 @@
+pm2 list
+pm2 restart <nombre o Id>
+pm2 logs <nombre o Id>
+pm2 restart <nombre o Id> / pm2 restart all
+pm2 stop <nombre o Id> / pm2 stop all
+pm2 delete <nombre o Id> / pm2 delete all
+pm2 monit
+pm2 show <nombre o Id>
